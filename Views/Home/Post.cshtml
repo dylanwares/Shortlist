@@ -1,0 +1,51 @@
+﻿@page
+@using Newtonsoft.Json;
+@using System.Web;
+@using Microsoft.AspNetCore.Http;
+@using System;
+@using Shortlist.Services;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    string serialisedUser = HttpContextAccessor.HttpContext.Request.Cookies["user"];
+    User currentUser = null;
+    if (serialisedUser == null) HttpContextAccessor.HttpContext.Response.Redirect("login");
+    else currentUser = JsonConvert.DeserializeObject<User>(serialisedUser);
+
+    int shortlistID = int.Parse(HttpContextAccessor.HttpContext.Request.Query["s"]);
+    Shortlist shortlist = new Database().Shortlist(shortlistID);
+}
+
+<script src="js/post/script.js"></script>
+
+<div id="header">
+    <div id="logo" style="color: black;" onclick="window.location.href='dashboard'">Shortlist</div>
+    <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" onclick="window.location.href='account'">
+        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2M7.35 18.5C8.66 17.56 10.26 17 12 17s3.34.56 4.65 1.5c-1.31.94-2.91 1.5-4.65 1.5s-3.34-.56-4.65-1.5m10.79-1.38a9.947 9.947 0 0 0-12.28 0A7.957 7.957 0 0 1 4 12c0-4.42 3.58-8 8-8s8 3.58 8 8c0 1.95-.7 3.73-1.86 5.12" />
+        <path fill="currentColor" d="M12 6c-1.93 0-3.5 1.57-3.5 3.5S10.07 13 12 13s3.5-1.57 3.5-3.5S13.93 6 12 6m0 5c-.83 0-1.5-.67-1.5-1.5S11.17 8 12 8s1.5.67 1.5 1.5S12.83 11 12 11" />
+    </svg>
+</div>
+
+<div style="row-gap: 20px;">
+    <div style="font-size: 32px; font-weight: 600;">Add a post to @shortlist.title</div>
+
+    <div style="justify-content: center;">
+        <div class="tabs glass" style="margin: auto;">
+            <div id="linkTabBut" class="tabButton activeTab" style="border-radius: 40px 0px 0px 40px" onclick="showLinkPost()">Link</div>
+            <div id="textTabBut" class="tabButton" style="border-radius: 0px 40px 40px 0px" onclick="showTextPost()">Text</div>
+        </div>
+    </div>
+
+    <div class="centred">
+        <div id="linkPost" class="form" style="row-gap: 20px; width: 324px; align-items: stretch;">
+            <input id="linkTitle" onchange="linkPostChanged()" class="glass" placeholder="Enter the title of your post..." />
+            <input id="linkInput" onchange="linkPostChanged()" class="glass" placeholder="Enter your link..." />
+            <div id="linkPostBut" class="primaryButton disabled" onclick="PostLink()">Post</div>
+        </div>
+
+        <div id="textPost" class="form centred" style="row-gap: 20px; display: none; width: 324px; align-items: stretch;">
+            <input id="textTitle" class="glass" onchange="textPostChanged()" placeholder="Enter the title of your post..." />
+            <input id="textBody" class="glass" placeholder="Enter the body of your post..." />
+            <div id="textPostBut" class="primaryButton disabled" onclick="PostText()">Post</div>
+        </div>
+    </div>
+</div>

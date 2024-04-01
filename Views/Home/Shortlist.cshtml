@@ -1,0 +1,157 @@
+﻿@page
+@using Newtonsoft.Json;
+@using System.Web;
+@using Microsoft.AspNetCore.Http;
+@using System;
+@using Shortlist.Services;
+@inject IHttpContextAccessor HttpContextAccessor
+@{ 
+    string serialisedUser = HttpContextAccessor.HttpContext.Request.Cookies["user"];
+    User currentUser = null;
+    if (serialisedUser == null)
+    {
+        HttpContextAccessor.HttpContext.Response.Redirect("login");
+    }
+    else
+    {
+        currentUser = JsonConvert.DeserializeObject<User>(serialisedUser);
+    }
+    int shortlistID = int.Parse(HttpContextAccessor.HttpContext.Request.Query["s"]);
+    Database db = new Database();
+    Shortlist shortlist = db.Shortlist(shortlistID);
+
+    List<Post> posts = db.FetchPosts(shortlist.id);
+    foreach (Post post in posts)
+{
+        post.vote = db.Vote(post.id, currentUser.id);
+}
+    }
+
+<script src="js/shortlist/script.js"></script>
+
+<div id="header">
+    <div id="logo" style="color: black;" onclick="window.location.href='dashboard'">Shortlist</div>
+    <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" onclick="window.location.href='account'">
+        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2M7.35 18.5C8.66 17.56 10.26 17 12 17s3.34.56 4.65 1.5c-1.31.94-2.91 1.5-4.65 1.5s-3.34-.56-4.65-1.5m10.79-1.38a9.947 9.947 0 0 0-12.28 0A7.957 7.957 0 0 1 4 12c0-4.42 3.58-8 8-8s8 3.58 8 8c0 1.95-.7 3.73-1.86 5.12" />
+        <path fill="currentColor" d="M12 6c-1.93 0-3.5 1.57-3.5 3.5S10.07 13 12 13s3.5-1.57 3.5-3.5S13.93 6 12 6m0 5c-.83 0-1.5-.67-1.5-1.5S11.17 8 12 8s1.5.67 1.5 1.5S12.83 11 12 11" />
+    </svg>
+</div>
+
+<div style="row-gap: 10px;">
+    <div style="flex-direction: row; column-gap: 20px; align-items: center;">
+        <div class="shortlistThumb" style="background: linear-gradient(to bottom right, rgb(@shortlist.primaryColour), rgb(@shortlist.secondaryColour))"></div>
+        <div style="font-size: 36px; font-weight: 600;">@shortlist.title</div>
+        <div style="justify-content: center;">
+            <div style="opacity: 0.5" class="underlineHover">@shortlist.membersCount members</div>
+            <div style="opacity: 0.5">@shortlist.postsCount posts</div>
+        </div>
+    </div>
+    <div>@shortlist.description</div>
+</div>
+
+<div style="font-size: 32px; font-weight: 600;"></div>
+<div style="width: 600px; row-gap: 20px;">
+    <div style="display: flex; flex-direction: row-reverse;">
+        @if (db.IsMember(currentUser.id, shortlist.id))
+            {
+        <div class="primaryButton" onclick="window.location.href = 'post?s=@shortlist.id'">+ Add Post</div>
+            }
+else
+{
+    <div class="primaryButton" onclick="joinShortlist(@currentUser.id, @shortlist.id, event)">Join Shortlist</div>
+}
+    </div>
+
+    <div class="centred" style="row-gap: 20px;">
+        @foreach (Post post in posts)
+        {
+            <div class="post">
+                <div style="flex-direction: row; column-gap: 10px; align-items: center;">
+                <div id="vote-@post.id" vote="@post.vote">
+                    @if (post.vote == 1)
+                    {
+                        <svg id="upvote-@post.id" post="@post.id" class="upvote voted" onclick="vote(@post.id, @currentUser.id, 1, event)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M12 21c-1.654 0-3-1.346-3-3v-4.764c-1.143 1.024-3.025.979-4.121-.115a3.002 3.002 0 0 1 0-4.242L12 1.758l7.121 7.121a3.002 3.002 0 0 1 0 4.242c-1.094 1.095-2.979 1.14-4.121.115V18c0 1.654-1.346 3-3 3M11 8.414V18a1.001 1.001 0 0 0 2 0V8.414l3.293 3.293a1.023 1.023 0 0 0 1.414 0a.999.999 0 0 0 0-1.414L12 4.586l-5.707 5.707a.999.999 0 0 0 0 1.414a1.023 1.023 0 0 0 1.414 0z" />
+                        </svg>
+                        <div id="voteCount-@post.id" style="text-align: center; font-size: 12px;">@post.votes</div>
+
+                        <svg id="downvote-@post.id" post="@post.id" class="downvote disabled" onclick="vote(@post.id, @currentUser.id, -1, event)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="m12 21.312l-7.121-7.121a3.002 3.002 0 0 1 0-4.242C5.973 8.855 7.857 8.811 9 9.834V5c0-1.654 1.346-3 3-3s3 1.346 3 3v4.834c1.143-1.023 3.027-.979 4.121.115a3.002 3.002 0 0 1 0 4.242zM7 11.07a.999.999 0 0 0-.707 1.707L12 18.484l5.707-5.707a.999.999 0 0 0 0-1.414a1.021 1.021 0 0 0-1.414 0L13 14.656V5a1.001 1.001 0 0 0-2 0v9.656l-3.293-3.293A.991.991 0 0 0 7 11.07" />
+                        </svg>
+                    }
+                    else if (post.vote == -1)
+                    {
+                        <svg id="upvote-@post.id" post="@post.id" class="upvote disabled" onclick="vote(@post.id, @currentUser.id, 1, event)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M12 21c-1.654 0-3-1.346-3-3v-4.764c-1.143 1.024-3.025.979-4.121-.115a3.002 3.002 0 0 1 0-4.242L12 1.758l7.121 7.121a3.002 3.002 0 0 1 0 4.242c-1.094 1.095-2.979 1.14-4.121.115V18c0 1.654-1.346 3-3 3M11 8.414V18a1.001 1.001 0 0 0 2 0V8.414l3.293 3.293a1.023 1.023 0 0 0 1.414 0a.999.999 0 0 0 0-1.414L12 4.586l-5.707 5.707a.999.999 0 0 0 0 1.414a1.023 1.023 0 0 0 1.414 0z" />
+                        </svg>
+                        <div id="voteCount-@post.id" style="text-align: center; font-size: 12px;">@post.votes</div>
+
+                        <svg id="downvote-@post.id" post="@post.id" class="downvote voted" onclick="vote(@post.id, @currentUser.id, -1, event)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="m12 21.312l-7.121-7.121a3.002 3.002 0 0 1 0-4.242C5.973 8.855 7.857 8.811 9 9.834V5c0-1.654 1.346-3 3-3s3 1.346 3 3v4.834c1.143-1.023 3.027-.979 4.121.115a3.002 3.002 0 0 1 0 4.242zM7 11.07a.999.999 0 0 0-.707 1.707L12 18.484l5.707-5.707a.999.999 0 0 0 0-1.414a1.021 1.021 0 0 0-1.414 0L13 14.656V5a1.001 1.001 0 0 0-2 0v9.656l-3.293-3.293A.991.991 0 0 0 7 11.07" />
+                        </svg>
+                    }
+                    else
+                    {
+                        <svg id="upvote-@post.id" post="@post.id" class="upvote" onclick="vote(@post.id, @currentUser.id, 1, event)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M12 21c-1.654 0-3-1.346-3-3v-4.764c-1.143 1.024-3.025.979-4.121-.115a3.002 3.002 0 0 1 0-4.242L12 1.758l7.121 7.121a3.002 3.002 0 0 1 0 4.242c-1.094 1.095-2.979 1.14-4.121.115V18c0 1.654-1.346 3-3 3M11 8.414V18a1.001 1.001 0 0 0 2 0V8.414l3.293 3.293a1.023 1.023 0 0 0 1.414 0a.999.999 0 0 0 0-1.414L12 4.586l-5.707 5.707a.999.999 0 0 0 0 1.414a1.023 1.023 0 0 0 1.414 0z" />
+                        </svg>
+                        <div id="voteCount-@post.id" style="text-align: center; font-size: 12px;">@post.votes</div>
+
+                        <svg id="downvote-@post.id" post="@post.id" class="downvote" onclick="vote(@post.id, @currentUser.id, -1, event)" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="m12 21.312l-7.121-7.121a3.002 3.002 0 0 1 0-4.242C5.973 8.855 7.857 8.811 9 9.834V5c0-1.654 1.346-3 3-3s3 1.346 3 3v4.834c1.143-1.023 3.027-.979 4.121.115a3.002 3.002 0 0 1 0 4.242zM7 11.07a.999.999 0 0 0-.707 1.707L12 18.484l5.707-5.707a.999.999 0 0 0 0-1.414a1.021 1.021 0 0 0-1.414 0L13 14.656V5a1.001 1.001 0 0 0-2 0v9.656l-3.293-3.293A.991.991 0 0 0 7 11.07" />
+                        </svg>
+                    }
+                </div>
+
+                @if (post.thumbnail != "")
+                {
+                    <img class="postThumbnail" src="@post.thumbnail" />
+                }
+                <div style="display: flex; flex-direction: column; row-gap: 5px;">
+                    @if (post.link)
+                    {
+                        <div class="linkTitle" onclick="openLink('@post.body')">@post.title</div>
+                        <div style="font-size: 12px;">@post.body.Split('/')[2]</div>
+                    }
+                    else
+                    {
+                        <div>@post.title</div>
+                        <div style="font-size: 12px;">@post.body</div>
+                    }
+                    <div style="font-size: 10px; color: rgba(0,0,0,0.5);">
+                        Posted by @post.creator.name - @if (post.dateCreated.ToShortDateString() == DateTime.Now.ToShortDateString())
+                        {@post.dateCreated.ToShortTimeString() }
+                    else
+                    { @post.dateCreated.ToShortDateString()}
+                    </div>
+                </div>
+                </div>
+                    <div style="height: 100%; flex-direction: column-reverse; padding-bottom: 10px; width: 20%;">
+                        <div onclick="openComments(@post.id)" class="underlineHover" style="font-size: 10px; text-align: right; overflow: hidden;">@post.commentCount Comments</div>
+                    </div>
+                    </div>
+                    }
+                </div>
+
+
+    <div id="popupOverlay" class="overlay">
+        <div class="popup">
+            <div onclick="closePopup()" class="closeIcon">&times;</div>
+            <div style="flex-direction: row;">
+                <input type="text" placeholder="Enter your comment..." style="width:70%;" class="glass" id="commentInput">
+                <div class="primaryButton" onclick="postComment('@currentUser.name.TrimEnd()')">Post</div>
+            </div>
+            <div id="comments" style="row-gap: 10px;">
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="membersPopupOverlay" class="overlay">
+        <div class="popup">
+            <div onclick="closePopup()" class="closeIcon">&times;</div>
+            @*<div id="members">
+                @foreach (User in )
+            </div>*@
+        </div>
+    </div>

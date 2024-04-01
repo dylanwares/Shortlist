@@ -1,0 +1,33 @@
+﻿@page
+@using Newtonsoft.Json;
+@using System.Web;
+@using Microsoft.AspNetCore.Http;
+@using System;
+@using Shortlist.Services;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    string serialisedUser = HttpContextAccessor.HttpContext.Request.Cookies["user"];
+    User currentUser = null;
+    if (serialisedUser != null)
+    {
+        HttpContextAccessor.HttpContext.Response.Redirect("dashboard");
+    }
+}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shortlist</title>
+    <script src="script.js"></script>
+    <script src="js/index/script.js"></script>
+</head>
+
+<body id="landing">
+    <div class="centred">
+        <div id="logo" style="font-size: 48px; color: white;">Shortlist</div>
+        <div style="flex-direction: row; justify-content: center; column-gap: 20px;">
+            <div class="button glass" onclick="goToSignup()">Sign up</div>
+            <div class="button glass" onclick="goToLogin()">Log in</div>
+        </div>
+    </div>
+</body>

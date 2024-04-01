@@ -1,0 +1,70 @@
+﻿@page
+@using Newtonsoft.Json;
+@using System.Web;
+@using Microsoft.AspNetCore.Http;
+@using System;
+@using Shortlist.Services;
+@using System.Collections.Generic;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    string serialisedUser = HttpContextAccessor.HttpContext.Request.Cookies["user"];
+    User currentUser = null;
+    if (serialisedUser == null) HttpContextAccessor.HttpContext.Response.Redirect("login");
+    else currentUser = JsonConvert.DeserializeObject<User>(serialisedUser);
+
+    Database db = new Database();
+    List<Shortlist> shortlists = db.UsersShortlists(currentUser.id);
+    }
+
+
+<script src="js/dashboard/script.js"></script>
+
+<div id="header">
+    <div id="logo" style="color: black;" onclick="window.location.href='dashboard'">Shortlist</div>
+    <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" onclick="window.location.href='account'">
+        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2M7.35 18.5C8.66 17.56 10.26 17 12 17s3.34.56 4.65 1.5c-1.31.94-2.91 1.5-4.65 1.5s-3.34-.56-4.65-1.5m10.79-1.38a9.947 9.947 0 0 0-12.28 0A7.957 7.957 0 0 1 4 12c0-4.42 3.58-8 8-8s8 3.58 8 8c0 1.95-.7 3.73-1.86 5.12" />
+        <path fill="currentColor" d="M12 6c-1.93 0-3.5 1.57-3.5 3.5S10.07 13 12 13s3.5-1.57 3.5-3.5S13.93 6 12 6m0 5c-.83 0-1.5-.67-1.5-1.5S11.17 8 12 8s1.5.67 1.5 1.5S12.83 11 12 11" />
+    </svg>
+</div>
+
+<div style="width: 600px; row-gap: 20px;">
+    <div style="display: flex; flex-direction: row-reverse;">
+        <div class="primaryButton" onclick="openPopup()">+ New List</div>
+    </div>
+    <div class="centred" style="row-gap: 20px;">
+        @foreach (Shortlist shortlist in shortlists)
+        {
+<div class="shortlistItem">
+    <div style="flex-direction: row; column-gap: 10px" class="centred">
+        <div class="shortlistThumb" style="background: linear-gradient(to bottom right, rgb(@shortlist.primaryColour), rgb(@shortlist.secondaryColour))"></div>
+        <div style="display: flex; flex-direction: column; row-gap: 5px;">
+            <div class="shortlistItemTitle" onclick="shortlistClicked(@shortlist.id)">@shortlist.title</div>
+            <div style="font-size: 12px;">@shortlist.description</div>
+        </div>
+     </div>
+    <div style="flex-direction: row-reverse;">
+        <div style="display: flex; flex-direction: column;">
+            <div style="font-size: 12px;">@shortlist.membersCount members</div>
+            <div style="font-size: 12px;">@shortlist.postsCount posts</div>
+        </div>
+    </div>
+</div>
+        }
+    </div>
+</div>
+
+<div id="popupOverlay" class="overlay">
+    <div class="popup">
+        <div onclick="closePopup()" class="closeIcon">&times;</div>
+        <div style="font-size: 24px;">Create your new shortlist</div>
+        <div style="flex-direction: row; align-items: center; column-gap: 10px">
+            <div class="shortlistThumb" id="createShortlistTN"></div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="0 0 24 24" class="iconButton" onclick="randomiseThumbnail()">
+                <path fill="currentColor" d="M12.079 2.25c-4.794 0-8.734 3.663-9.118 8.333H2a.75.75 0 0 0-.528 1.283l1.68 1.666a.75.75 0 0 0 1.056 0l1.68-1.666a.75.75 0 0 0-.528-1.283h-.893c.38-3.831 3.638-6.833 7.612-6.833a7.658 7.658 0 0 1 6.537 3.643a.75.75 0 1 0 1.277-.786A9.158 9.158 0 0 0 12.08 2.25m8.761 8.217a.75.75 0 0 0-1.054 0L18.1 12.133a.75.75 0 0 0 .527 1.284h.899c-.382 3.83-3.651 6.833-7.644 6.833a7.697 7.697 0 0 1-6.565-3.644a.75.75 0 1 0-1.277.788a9.197 9.197 0 0 0 7.842 4.356c4.808 0 8.765-3.66 9.15-8.333H22a.75.75 0 0 0 .527-1.284z"></path>
+            </svg>
+        </div>
+        <input type="text" maxlength="25" placeholder="Enter the name of your shortlist..." class="glass" id="shortlistName">
+        <textarea type="text" placeholder="Enter the name of your shortlist..." class="glass" id="shortlistDesc"></textarea>
+        <div id="createShortlistBut" class="glass button primaryButton" onclick="createShortlist()">Create Shortlist</div>
+    </div>
+</div>
