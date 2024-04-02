@@ -28,21 +28,27 @@ function createShortlist() {
         secondaryColour: random2
     };
 
-    $.ajax({
-        type: "POST",
-        url: "/Home/CreateShortlist",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify(data),
-        success: function (response) {
-            window.location.href = 'shortlist?s=' + response.id;
-        },
-        error: function (error) {
-            alert('There was an error creating your shortlist. Please try again.');
-            but.classList.remove('disabled');
-            but.innerHTML = 'Create Shortlist';
-        }
-    })
+    if (data.name != '') {
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/CreateShortlist",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (response) {
+                window.location.href = 'shortlist?s=' + response.id;
+            },
+            error: function (error) {
+                alert('There was an error creating your shortlist. Please try again.');
+                but.classList.remove('disabled');
+                but.innerHTML = 'Create Shortlist';
+            }
+        })
+    }
+    else {
+        alert('Please include a name for your shortlist.');
+    }
 }
 
 function randomiseThumbnail() {

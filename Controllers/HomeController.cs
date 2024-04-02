@@ -108,11 +108,15 @@ namespace Shortlist.Controllers
 
             if (user != null)
             {
-                string serialisedUser = JsonConvert.SerializeObject(user);
-                Response.Cookies.Append("user", serialisedUser);
-                return Ok(new { success = true });
+                if (user.id != 0)
+                {
+                    string serialisedUser = JsonConvert.SerializeObject(user);
+                    Response.Cookies.Append("user", serialisedUser);
+                    return Ok(new { success = true });
+                }
+                else return StatusCode(500, new { success = false, issue = "wrongPass" });
             }
-            else return StatusCode(500, new { success = false });
+            else return StatusCode(500, new { success = false, issue = "serverError" });
         }
 
         [HttpPost]

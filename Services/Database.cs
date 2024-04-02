@@ -91,7 +91,7 @@ namespace Shortlist.Services
                             }
                             else
                             {
-                                return null;
+                                return new User(0, null, null);
                             }
                         }
                     }

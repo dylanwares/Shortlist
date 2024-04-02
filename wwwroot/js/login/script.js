@@ -19,8 +19,8 @@
             window.location.href = 'dashboard';
         },
         error: function (error) {
-            alert('Email or password incorrect.');
-            document.getElementById('loginBut').innerHTML = "Log in"
+            alert('Username or password is incorrect.');
+            document.getElementById('loginBut').innerHTML = "Log in";
             loginBut.style.opacity = 1;
             loginBut.style.pointerEvents = 'initial';
         }
