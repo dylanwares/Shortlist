@@ -14,7 +14,7 @@
 
     Database db = new Database();
     List<Shortlist> shortlists = db.UsersShortlists(currentUser.id);
-    }
+}
 
 
 <script src="js/dashboard/script.js"></script>
@@ -32,25 +32,35 @@
         <div class="primaryButton" onclick="openPopup()">+ New List</div>
     </div>
     <div class="centred" style="row-gap: 20px;">
-        @foreach (Shortlist shortlist in shortlists)
+        @if (shortlists.Count > 0)
         {
-<div class="shortlistItem">
-    <div style="flex-direction: row; column-gap: 10px" class="centred">
-        <div class="shortlistThumb" style="background: linear-gradient(to bottom right, rgb(@shortlist.primaryColour), rgb(@shortlist.secondaryColour))"></div>
-        <div style="display: flex; flex-direction: column; row-gap: 5px;">
-            <div class="shortlistItemTitle" onclick="shortlistClicked(@shortlist.id)">@shortlist.title</div>
-            <div style="font-size: 12px;">@shortlist.description</div>
-        </div>
-     </div>
-    <div style="flex-direction: row-reverse;">
-        <div style="display: flex; flex-direction: column;">
-            <div style="font-size: 12px;">@shortlist.membersCount members</div>
-            <div style="font-size: 12px;">@shortlist.postsCount posts</div>
-        </div>
-    </div>
-</div>
+            @foreach (Shortlist shortlist in shortlists)
+            {
+                <div class="shortlistItem">
+                    <div style="flex-direction: row; column-gap: 10px" class="centred">
+                        <div class="shortlistThumb" style="background: linear-gradient(to bottom right, rgb(@shortlist.primaryColour), rgb(@shortlist.secondaryColour))"></div>
+                        <div style="display: flex; flex-direction: column; row-gap: 5px;">
+                            <div class="shortlistItemTitle" onclick="shortlistClicked(@shortlist.id)">@shortlist.title</div>
+                            <div style="font-size: 12px;">@shortlist.description</div>
+                        </div>
+                    </div>
+                    <div style="flex-direction: row-reverse;">
+                        <div style="display: flex; flex-direction: column;">
+                            <div style="font-size: 12px;">@shortlist.membersCount members</div>
+                            <div style="font-size: 12px;">@shortlist.postsCount posts</div>
+                        </div>
+                    </div>
+                </div>
+            }
         }
-    </div>
+        else
+        {
+              <div style="margin-top: 100px; align-items: center; row-gap: 10px; padding: 40px; border-radius: 10px; border: dashed; border-color: rgba(0,0,0,0.15)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 24 24"><path fill="currentColor" d="M18 12c-.55 0-1 .45-1 1v5.22c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1m3.02-7H19V2.98c0-.54-.44-.98-.98-.98h-.03c-.55 0-.99.44-.99.98V5h-2.01c-.54 0-.98.44-.99.98v.03c0 .55.44.99.99.99H17v2.01c0 .54.44.99.99.98h.03c.54 0 .98-.44.98-.98V7h2.02c.54 0 .98-.44.98-.98v-.04c0-.54-.44-.98-.98-.98" /><path fill="currentColor" d="M14 9H8c-.55 0-1 .45-1 1s.45 1 1 1h6c.55 0 1-.45 1-1s-.45-1-1-1m0 3H8c-.55 0-1 .45-1 1s.45 1 1 1h6c.55 0 1-.45 1-1s-.45-1-1-1m0 3H8c-.55 0-1 .45-1 1s.45 1 1 1h6c.55 0 1-.45 1-1s-.45-1-1-1" /></svg>
+                    <div>Create your first shortlist</div>
+                    <div class="primaryButton glass" onclick="openPopup()">+ New List</div>
+              </div>
+        }
 </div>
 
 <div id="popupOverlay" class="overlay">
