@@ -17,16 +17,16 @@
     Shortlist shortlist = db.Shortlist(shortlistID);
 
     List<Post> posts = db.FetchPosts(shortlist.id);
-    foreach (Post post in posts)
-    {
-        post.vote = db.Vote(post.id, currentUser.id);
-    }
 
     bool isMember = false;
 
     if (currentUser != null)
     {
         isMember = db.IsMember(currentUser.id, shortlistID);
+            foreach (Post post in posts)
+    {
+        post.vote = db.Vote(post.id, currentUser.id);
+    }
     }
 }
 
@@ -45,7 +45,7 @@
         <div class="shortlistThumb" style="background: linear-gradient(to bottom right, rgb(@shortlist.primaryColour), rgb(@shortlist.secondaryColour))"></div>
         <div style="font-size: 36px; font-weight: 600;">@shortlist.title</div>
         <div style="justify-content: center;">
-            <div style="opacity: 0.5" class="underlineHover">@shortlist.membersCount members</div>
+            <div style="opacity: 0.5" class="underlineHover" onclick="openMembersPopup()">@shortlist.membersCount members</div>
             <div style="opacity: 0.5">@shortlist.postsCount posts</div>
         </div>
     </div>
@@ -178,9 +178,18 @@
 
     <div id="membersPopupOverlay" class="overlay">
         <div class="popup">
-            <div onclick="closePopup()" class="closeIcon">&times;</div>
-            @*<div id="members">
-                @foreach (User in )
-            </div>*@
+            <div onclick="closeMembersPopup()" class="closeIcon" style="z-index: 1000">&times;</div>
+            <div id="members">
+                <div style="width: 100%; text-align: center; font-size: 16px; margin-bottom: 10px; margin-top: -32px;">@shortlist.membersCount members</div>
+                <div style="row-gap: 5px;">
+                    @foreach(User member in db.ShortlistMembers(shortlistID))
+                    {
+                        <div style="flex-direction: row; column-gap: 5px;">
+                            <div style="font-size: 14px; color: rgba(0,0,0,0.75)">@member.name</div>
+                            <div style="color: rgba(0,0,0,0.5); font-size:14px;">(@member.username.TrimEnd())</div>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
     </div>

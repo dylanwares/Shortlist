@@ -203,3 +203,14 @@ function displayComments(comments) {
         commentNode.appendChild(bodyNode);
     })
 }
+
+function openMembersPopup() {
+    var popup = document.getElementById("membersPopupOverlay");
+
+    popup.classList.add('overlay-active')
+}
+
+function closeMembersPopup() {
+    var popup = document.getElementById('membersPopupOverlay');
+    popup.classList.remove('overlay-active');
+}
