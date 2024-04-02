@@ -640,5 +640,50 @@ namespace Shortlist.Services
             }
             catch (Exception e) { Console.WriteLine("Error creating comment: " + e); return false; }
         }
+
+        public List<User> ShortlistMembers(int shortlistId)
+        {
+            List<User> members = new List<User>();
+
+
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT [user] FROM ShortlistMember WHERE shortlist = @Shortlist";
+                List<int> ids = new List<int>();
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Shortlist", shortlistId);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ids.Add(reader.GetInt32(0));
+                        }
+                    }
+                }
+
+                query = "SELECT * FROM [User] WHERE [unique_id] IN (" + string.Join(",", ids) + ")";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            members.Add(new User(
+                                reader.GetInt32(reader.GetOrdinal("unique_id")),
+                                reader.GetString(reader.GetOrdinal("name")),
+                                reader.GetString(reader.GetOrdinal("username"))
+                            ));
+                        }
+                    }
+                }
+                return members;
+        }
+    }
     }
 }

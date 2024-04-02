@@ -34,6 +34,11 @@ app.UseEndpoints(endpoints =>
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
     endpoints.MapControllerRoute(
+        name: "Index",
+        pattern: "index",
+        defaults: new { controller = "Home", action = "Index" });
+
+    endpoints.MapControllerRoute(
         name: "SignUp",
         pattern: "signup",
         defaults: new { controller = "Home", action = "SignUp" });
