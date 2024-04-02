@@ -8,11 +8,7 @@
 @{
     string serialisedUser = HttpContextAccessor.HttpContext.Request.Cookies["user"];
     User currentUser = null;
-    if (serialisedUser == null)
-    {
-        HttpContextAccessor.HttpContext.Response.Redirect("login");
-    }
-    else
+    if (serialisedUser != null)
     {
         currentUser = JsonConvert.DeserializeObject<User>(serialisedUser);
     }
