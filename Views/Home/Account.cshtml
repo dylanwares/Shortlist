@@ -1,4 +1,10 @@
 ﻿@page
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    string serialisedUser = HttpContextAccessor.HttpContext.Request.Cookies["user"];
+
+    if (serialisedUser == null) HttpContextAccessor.HttpContext.Response.Redirect("index");
+}
 
 <script src="js/account/script.js"></script>
 
