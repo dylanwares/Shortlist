@@ -84,7 +84,7 @@ namespace Shortlist.Controllers
         public ActionResult CreateUser([FromBody] Request request)
         {
             string name = request.name;
-            string username = request.username;
+            string username = request.username.ToLower();
             string password = Utilities.Hash(request.password);
 
             User user = new Database().CreateUser(name, username, password);
@@ -101,10 +101,10 @@ namespace Shortlist.Controllers
         [HttpPost]
         public ActionResult Login([FromBody] Request request)
         {
-            string email = request.username;
+            string username = request.username.ToLower();
             string password = Utilities.Hash(request.password);
 
-            User user = new Database().Login(email, password);
+            User user = new Database().Login(username, password);
 
             if (user != null)
             {
