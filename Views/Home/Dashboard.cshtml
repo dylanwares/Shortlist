@@ -12,8 +12,13 @@
     if (serialisedUser == null) HttpContextAccessor.HttpContext.Response.Redirect("login");
     else currentUser = JsonConvert.DeserializeObject<User>(serialisedUser);
 
-    Database db = new Database();
-    List<Shortlist> shortlists = db.UsersShortlists(currentUser.id);
+    List<Shortlist> shortlists = new List<Shortlist>();
+
+    if (currentUser != null)
+    {
+        Database db = new Database();
+        shortlists = db.UsersShortlists(currentUser.id);
+    }
 }
 
 
