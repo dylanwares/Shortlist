@@ -8,6 +8,7 @@ using System.Web;
 using System.Collections.Generic;
 using System.Security.Policy;
 using Microsoft.AspNetCore.Http;
+using System.Diagnostics.Contracts;
 
 namespace Shortlist.Controllers
 {
@@ -237,6 +238,20 @@ namespace Shortlist.Controllers
 
             if (success) return Ok(new { success = true });
             else return StatusCode(500, new { success = false });
+        }
+
+        [HttpPost]
+        public ActionResult DeletePost([FromBody] Request request)
+        {
+            int postId = request.post;
+
+            bool success = new Database().DeletePost(postId);
+
+            if (success)
+            {
+                return Ok(new { success = true });
+            }
+            else { return StatusCode(500, new { success = false }); }
         }
     }
 }   
