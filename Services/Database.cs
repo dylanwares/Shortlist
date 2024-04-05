@@ -9,7 +9,7 @@ namespace Shortlist.Services
 {
     public class Database
     {
-        SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+       SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
 
         public Database()
         {
@@ -683,7 +683,34 @@ namespace Shortlist.Services
                     }
                 }
                 return members;
+            }
         }
-    }
+        public bool DeletePost(int postId)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    connection.Open();
+
+                    string query = "DELETE FROM [Vote] WHERE post = @Post\n" +
+                        "DELETE FROM [Post] WHERE unique_id = @Post";
+
+                    using (SqlCommand command = new SqlCommand(query, connection)) 
+                    {
+                        command.Parameters.AddWithValue("@Post", postId);
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error deleting post: " + e);
+                return false;
+            }
+        }
     }
 }

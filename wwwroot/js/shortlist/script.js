@@ -123,7 +123,7 @@ function joinShortlist(userId, shortlistId, event) {
     })
 }
 
-function closePopup() {
+function closeCommentsPopup() {
     var popup = document.getElementById('popupOverlay');
     popup.classList.remove('overlay-active');
     var node = document.getElementById('comments');
@@ -210,7 +210,33 @@ function openMembersPopup() {
     popup.classList.add('overlay-active')
 }
 
-function closeMembersPopup() {
-    var popup = document.getElementById('membersPopupOverlay');
+function closePopup() {
+    var popup = document.getElementsByClassName('overlay-active')[0];
     popup.classList.remove('overlay-active');
+}
+
+function openPostOptionsPopup(post) {
+    var popup = document.getElementById('postOptionsPopup');
+    popup.classList.add('overlay-active');
+    popup.setAttribute('post', post);
+}
+
+function deletePost() {
+    var data = {
+        post: document.getElementById('postOptionsPopup').getAttribute('post')
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/Home/DeletePost",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(data),
+        success: function (response) {
+            window.location.reload();
+        },
+        error: function (error) {
+            alert('There was an error deleting your post.');
+        }
+    })
 }

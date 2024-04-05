@@ -149,7 +149,13 @@
                             </div>
                         </div>
                     </div>
-                    <div style="height: 100%; flex-direction: column-reverse; padding-bottom: 10px; width: 20%;">
+                    <div style="height: 100%; flex-direction: column; justify-content:space-between; padding-bottom: 10px; width: 20%;">
+                        <div style="flex-direction: row-reverse; padding-top: 15px;">
+                            @if (currentUser != null && post.creator.id == currentUser.id)
+                            {
+                                <svg style="cursor: pointer;" onclick="openPostOptionsPopup(@post.id)" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 7a2 2 0 1 0-2-2a2 2 0 0 0 2 2m0 10a2 2 0 1 0 2 2a2 2 0 0 0-2-2m0-7a2 2 0 1 0 2 2a2 2 0 0 0-2-2" /></svg>
+                            }
+                        </div>
                         <div onclick="openComments(@post.id)" class="underlineHover" style="font-size: 10px; text-align: right; overflow: hidden;">@post.commentCount Comments</div>
                     </div>
                 </div>
@@ -192,7 +198,7 @@
 
     <div id="membersPopupOverlay" class="overlay">
         <div class="popup">
-            <div onclick="closeMembersPopup()" class="closeIcon" style="z-index: 1000">&times;</div>
+            <div onclick="closePopup()" class="closeIcon" style="z-index: 1000">&times;</div>
             <div id="members">
                 <div style="width: 100%; text-align: center; font-size: 16px; margin-bottom: 10px; margin-top: -32px;">@shortlist.membersCount members</div>
                 <div style="row-gap: 5px;">
@@ -205,5 +211,19 @@
                     }
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="postOptionsPopup" class="overlay">
+        <div class="popup">
+            <div onclick="closePopup()" class="closeIcon" style="z-index: 1000">&times;</div>
+            <div>
+                <div onclick="deletePost()" style="padding-left: 20px; padding-right: 20px; flex-direction: row; column-gap: 10px; cursor: pointer">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 28 28"><path fill="#b80000" d="M11.5 6h5a2.5 2.5 0 0 0-5 0M10 6a4 4 0 0 1 8 0h6.25a.75.75 0 0 1 0 1.5h-1.31l-1.217 14.603A4.25 4.25 0 0 1 17.488 26h-6.976a4.25 4.25 0 0 1-4.235-3.897L5.06 7.5H3.75a.75.75 0 0 1 0-1.5zm2.5 5.75a.75.75 0 0 0-1.5 0v8.5a.75.75 0 0 0 1.5 0zm3.75-.75a.75.75 0 0 0-.75.75v8.5a.75.75 0 0 0 1.5 0v-8.5a.75.75 0 0 0-.75-.75" /></svg>
+                    </div>
+                    <div style="align-self: center;">Delete Post</div>
+                </div>
+                </div>
         </div>
     </div>
