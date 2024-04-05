@@ -712,5 +712,43 @@ namespace Shortlist.Services
                 return false;
             }
         }
+
+        public List<Vote> FetchVotes(int postId)
+        {
+            try
+            {
+                List<Vote> votes = new List<Vote>();
+
+                using (SqlConnection connection = new SqlConnection())
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM [Vote] WHERE [post] = @Post";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Post", postId);
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                votes.Add(new Vote(
+                                    reader.GetInt32(reader.GetOrdinal("vote")),
+                                    User(reader.GetInt32(reader.GetOrdinal("user"))
+                                )));
+                            }
+                        }
+                    }
+                }
+
+                return votes;
+            }
+
+            catch(Exception e)
+            {
+                return null;
+            }
+        }
     }
 }

@@ -253,6 +253,16 @@ namespace Shortlist.Controllers
             }
             else { return StatusCode(500, new { success = false }); }
         }
+
+        [HttpPost]
+        public ActionResult<IEnumerable<Comment>> FetchVotes(int postId)
+        {
+            List<Vote> votes = new Database().FetchVotes(postId);
+
+            if (votes != null)
+            { return Ok(new { success = true, votes = JsonConvert.SerializeObject(votes) }); }
+            else { return StatusCode(500, new { success = false }); }
+        }
     }
 }   
 
