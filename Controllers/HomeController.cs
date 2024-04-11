@@ -253,7 +253,15 @@ namespace Shortlist.Controllers
             }
             else { return StatusCode(500, new { success = false }); }
         }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<Vote>> FetchVotes(int postId)
+        {
+            List<Vote> votes = new Database().FetchVotes(postId);
+
+            return Ok(new { success = true, votes = JsonConvert.SerializeObject(votes) }); }
+        }
     }
-}   
+
 
 

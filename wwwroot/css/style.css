@@ -325,3 +325,11 @@ input:focus {
 .commentBody {
     font-size: 14px;
 }
+
+.voteCount{
+    cursor: pointer;
+}
+
+.voteCount:hover{
+    text-decoration: underline;
+}
