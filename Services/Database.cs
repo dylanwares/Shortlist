@@ -719,7 +719,7 @@ namespace Shortlist.Services
             {
                 List<Vote> votes = new List<Vote>();
 
-                using (SqlConnection connection = new SqlConnection())
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
                 {
                     connection.Open();
 
@@ -745,8 +745,9 @@ namespace Shortlist.Services
                 return votes;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
+                Console.WriteLine("Error fetching votes: " + e);
                 return null;
             }
         }
