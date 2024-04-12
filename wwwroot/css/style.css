@@ -13,6 +13,8 @@ body {
     display: flex;
     margin-top: 100px;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 #landing {
@@ -111,11 +113,16 @@ div {
     transition: background-color 0.5s ease;
     text-align: center;
     height: 40px;
+    cursor: pointer;
 }
 
 .primaryButton:hover {
     background-position: 100% 0;
     transition: all .4s ease-in-out;
+}
+
+.secondaryButton:hover{
+    background-color: rgba(0,0,0,0.05);
 }
 
 .button:hover {
@@ -332,4 +339,15 @@ input:focus {
 
 .voteCount:hover{
     text-decoration: underline;
+}
+
+#footer{
+    width: 100%;
+    background-color: rgba(0,0,0,0.75);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 50px;
+    color: white;
+    font-size: 12px;
 }

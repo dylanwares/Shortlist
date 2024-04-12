@@ -292,3 +292,14 @@ function closeVotesPopup() {
         node.removeChild(node.lastChild);
     }
 }
+
+function openInvitePopup() {
+    var popup = document.getElementById('invitePopup');
+    popup.classList.add('overlay-active');
+}
+
+function copyInviteLink() {
+    var url = document.getElementById('inviteLinkInput').value;
+    navigator.clipboard.writeText(url);
+    document.getElementById('inviteLinkBut').innerHTML = 'Copied';
+}
